@@ -262,6 +262,7 @@
   - type: Fiber
     fiberMaterial: fibers-latex
   - type: FingerprintMask
+  - type: SanitizedComponent # goob edit
 
 - type: entity
   parent: ClothingHandsButcherable
@@ -276,6 +277,7 @@
   - type: Fiber
     fiberMaterial: fibers-nitrile
   - type: FingerprintMask
+  - type: SanitizedComponent # goob edit
 ####
 - type: entity
   parent: ClothingHandsButcherable

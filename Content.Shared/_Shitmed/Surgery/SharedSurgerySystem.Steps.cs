@@ -551,12 +551,18 @@ public abstract partial class SharedSurgerySystem
     }
     private void HandleSanitization(SurgeryStepEvent args)
     {
-        if (_inventory.TryGetSlotEntity(args.User, "gloves", out var _)
-            && _inventory.TryGetSlotEntity(args.User, "mask", out var _))
-            return;
-
+        // Return early if user has SanitizedComponent
         if (HasComp<SanitizedComponent>(args.User))
             return;
+
+        // Checks for if user has PPE equipment in gloves & mask slot
+        if (_inventory.TryGetSlotEntity(args.User, "gloves", out var gloves) && _inventory.TryGetSlotEntity(args.User, "mask", out var mask))
+            // Depending on if user can breathe, check for Sanitized gloves (and if they breathe, a mask)
+            if (HasComp<RespiratorComponent>(args.User) ? (HasComp<SanitizedComponent>(gloves) && gloves) : HasComp<SanitizedComponent>(gloves))
+                // If PPE equipment is in place, return
+                return;
+
+        // If not returned by this point, add 5 points of poison damage (sepsis)
         var sepsis = new DamageSpecifier(_prototypes.Index<DamageTypePrototype>("Poison"), 5);
         var ev = new SurgeryStepDamageEvent(args.User, args.Body, args.Part, args.Surgery, sepsis, 0.5f);
         RaiseLocalEvent(args.Body, ref ev);
