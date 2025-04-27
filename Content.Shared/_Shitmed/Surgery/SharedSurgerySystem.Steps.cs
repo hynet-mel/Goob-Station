@@ -15,6 +15,7 @@ using Content.Shared.Body.Part;
 using Content.Shared.Body.Organ;
 using Content.Shared._Shitmed.BodyEffects;
 using Content.Shared._Shitmed.Body.Events;
+using Content.Shared._Shitmed.Body.Components;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Damage;
@@ -556,9 +557,10 @@ public abstract partial class SharedSurgerySystem
             return;
 
         // Checks for if user has PPE equipment in gloves & mask slot
+        var userBreathes = !(HasComp<BreathingImmunityComponent>(args.User));
         if (_inventory.TryGetSlotEntity(args.User, "gloves", out var gloves) && _inventory.TryGetSlotEntity(args.User, "mask", out var mask))
             // Depending on if user can breathe, check for Sanitized gloves (and if they breathe, a mask)
-            if (HasComp<RespiratorComponent>(args.User) ? (HasComp<SanitizedComponent>(gloves) && gloves) : HasComp<SanitizedComponent>(gloves))
+            if (userBreathes ? (HasComp<SanitizedComponent>(gloves) & mask is null) : HasComp<SanitizedComponent>(gloves))
                 // If PPE equipment is in place, return
                 return;
 
